@@ -3,10 +3,9 @@ import Web3Modal from 'web3modal';
 import { ethers } from 'ethers';
 import axios from 'axios';
 import { create as ipfsHttpClient } from 'ipfs-http-client';
-
 import { MarketAddress, MarketAddressABI } from './constants';
 
-const subdomainName = 'polyplace';
+const subdomainName = 'roxy';
 
 const projectId = process.env.NEXT_PUBLIC_IPFS_PROJECT_ID;
 const projectSecret = process.env.NEXT_PUBLIC_API_KEY_SECRET;
@@ -29,7 +28,7 @@ const fetchContract = (signerOrProvider) => new ethers.Contract(MarketAddress, M
 export const NFTContext = React.createContext();
 
 export const NFTProvider = ({ children }) => {
-  const nftCurrency = 'MATIC';
+  const nftCurrency = 'Roxy';
   const [currentAccount, setCurrentAccount] = useState('');
   const [isLoadingNFT, setIsLoadingNFT] = useState(false);
 
@@ -61,7 +60,7 @@ export const NFTProvider = ({ children }) => {
     try {
       const added = await client.add({ content: file });
 
-      const url = `${endpointBasePath}/${added.path}`;
+      const url = `${endpointBasePath}${added.path}`;
 
       console.log(`Upload to IPFS url: ${url}`);
 
@@ -112,9 +111,11 @@ export const NFTProvider = ({ children }) => {
 
   const fetchNFTs = async () => {
     setIsLoadingNFT(false);
-    const provider = new ethers.providers.JsonRpcProvider('https://polygon-mumbai.g.alchemy.com/v2/aT46mujHo45399eX-fWp9mucSwWW6iuA');
+    const provider = new ethers.providers.JsonRpcProvider('https://roxycoin.eu.ngrok.io/');
     const contract = fetchContract(provider);
     const data = await contract.fetchMarketItems();
+
+
 
     const items = await Promise.all(data.map(async ({ tokenId, seller, owner, price: unformattedPrice }) => {
       const tokenURI = await contract.tokenURI(tokenId);
